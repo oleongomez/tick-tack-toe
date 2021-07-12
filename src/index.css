@@ -1,6 +1,7 @@
 body {
 margin: 0;
 padding: 0;
+/* background-color: gray; */
 }
 
 code {
@@ -10,46 +11,48 @@ code {
 
 .cell-col-class {
   margin: 0px;
-  padding: 0px;
-  border: solid 5px darkorchid;
+  padding: 2px;
+  border: solid 1px darkslateblue;
 }
 
 .cell-button {
   margin: 0px;
   padding: 0px;
-  width: 250px;
-  height: 250px;
+  width: 175px;
+  height: 175px;
   /* border-color: greenyellow; */
-  border: solid 2px red;
+  font-size: x-large;
   background-color: blue;
+  border-radius: 25px;
 }
 
 .board {
   margin: 0;
   padding: 0;
   width: auto;
+  border-radius: 25px;
   /* width: 600px;
   height: 600px; */
-  border: solid 2px darkcyan;
+  /* border: solid 2px darkcyan; */
 }
 
 .status-bar {
-  /* width: 615px;
-  height: 215px; */
-  border: solid 2px;
+margin: 2px;
+padding: 2px;
+border-bottom: solid 2px darkslateblue;
 }
 
 .status-message {
-  /* width: 615px;
-  height: 215px; */
-  /* border: solid 5px; */
+  width: auto;
+  height: auto;
 }
 
 .board-row {
   margin: 0px;
   padding: 0px;
-  /* width: 750px;
-  height: 250px; */
-  border: solid 2px orange;
-  background-color: deepskyblue;
+  /* background-color: rgb(37, 145, 145) */
+}
+
+.restart-button{
+  background-color: green;
 }

@@ -72,7 +72,7 @@ const Board = () => {
     let a = [0, 1, 2];
     return (
       <Row
-        className="board-row d-flex justify-content-center"
+        className="board-row d-flex align-items-center justify-content-center"
         key={uuid()}
       >
         {a.map((col) => {
@@ -97,20 +97,24 @@ const Board = () => {
   const renderPlayerInTurn = () => {
     let player_symbol = { 1: "X", 2: "O" };
     return (
-      <div className="status-message"
+      <div
       >
-        It is {player_symbol[player]} turn
+        <h1> It is {player_symbol[player]} turn </h1>
       </div>
     );
   };
   const renderWinner = () => {
     return (
-      <div className="status-message"
+      <div
       >
-        The winner is {calculateWinner(squares)}
+       <h1> {calculateWinner(squares)} won!!!</h1>
       </div>
     );
   };
+  const restartGame = () =>{
+    setSquares(Array(9).fill(null))
+    setPlayer(1)
+  }
   const createBoard = () => {
     let a = [0, 1, 2];
     return (
@@ -118,15 +122,18 @@ const Board = () => {
         {a.map((item) => {
           return createRow(item);
         })}
-        <Row key={uuid()}>
-          <Col>
+        <Row className="status-bar" key={uuid()}>
+          <Col className="status-message d-flex flex-row align-items-center justify-content-center">
             {calculateWinner(squares) ? renderWinner() : renderPlayerInTurn()}
+          </Col>
+          <Col className="status-message">
+          <Button className="restart-button" onClick={restartGame}> <h1>Restart</h1> </Button>
           </Col>
         </Row>
       </Container>
     );
   };
-  return <div className="board d-flex justify-content-center">{createBoard()}</div>;
+  return <div className="board d-flex align-items-center justify-content-center">{createBoard()}</div>;
 };
 
 export default Board;
