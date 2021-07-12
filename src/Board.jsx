@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Row, Container} from "react-bootstrap";
+import { Button, Col, Row, Container } from "react-bootstrap";
+import "./index.css";
 
 function uuid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -9,73 +10,77 @@ function uuid() {
   });
 }
 
-const Cell = ({row, col, started, callback}) => {
-  const [enabled, setEnabled] = useState(true)
-  const [player, setPlayer] = useState(null)
-  useEffect(()=>{
-    console.log(`I, ${3 * row + col}, am being rendered`)
-  })
-  const disableButton = (callback) => {
-    // this changes the player but the button cannot be disabled
-    // changing the parent state causes rerender of everything.
-    console.log(callback())
-    setPlayer(callback())
-    // console.log("Disable the button")
-    // console.log(typeof(enabled))
-    // console.log(enabled)
-    console.log(player)
-    setEnabled(false)
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
   }
+  return null;
+}
 
-  const createCell = (row, col, player, started, callback) => {
+const Cell = ({ id, player, callback }) => {
+  useEffect(() => {
+    console.log(`I, ${id}, am being rendered`);
+    console.log(player);
+  });
+  const disableButton = (callback) => {
+    callback(id);
+  };
+
+  const createCell = (id, player, callback) => {
     return (
-      <Col
-        key={uuid()}
-        style={{
-          margin: "px",
-          padding: "5px",
-          width: "200px",
-          height: "200px",
-        }}
-        className="bg-secondary"
-      >
+      <Col key={uuid()} className="cell-col-class">
         <Button
-          style={{ width: "200px", height: "200px" }}
-          className="bg-primary"
-          onClick={(e)=>disableButton(callback)}
-          id={3 * row + col}
+          className="cell-button"
+          onClick={(e) => disableButton(callback)}
+          id={id}
           key={uuid()}
-          disabled={!enabled}
-        >{!enabled ? player: ""}
+          disabled={player[id] != null}
+        >
+          {player[id] == null ? "" : player[id]}
         </Button>
       </Col>
     );
   };
-  return <>{createCell(row, col, player, started, callback)}</>;
+  return <>{createCell(id, player, callback)}</>;
 };
 const Board = () => {
   const [player, setPlayer] = useState(1);
-  const [started, setStarted] = useState(false);
-  const handleClick = (e) => {
-    console.log("Handling the click");
-    return changePlayer();
+  const [squares, setSquares] = useState(Array(9).fill(null));
+
+  const handleClick = (i) => {
+    const new_state = squares.slice();
+    new_state[i] = player === 1 ? "X" : "O";
+    console.log("new_state: ", new_state);
+    setSquares(new_state);
+    setPlayer(changePlayer());
   };
-  const createRow = (row, callback) => {
+
+  const createRow = (row) => {
     let a = [0, 1, 2];
     return (
       <Row
-        style={{ width: "615px", height: "215px" }}
-        className="bg-secondary"
+        className="board-row d-flex justify-content-center"
         key={uuid()}
       >
-        {a.map((item) => {
+        {a.map((col) => {
           return (
             <Cell
-              row={row}
-              col={item}
-              callback={callback}
-              player={player}
-              started={started}
+              id={3 * row + col}
+              callback={handleClick}
+              player={squares}
               key={uuid()}
             />
           );
@@ -85,38 +90,43 @@ const Board = () => {
   };
   const changePlayer = () => {
     if (player === 1) {
-        return 2;
+      return 2;
     }
     return 1;
   };
   const renderPlayerInTurn = () => {
     let player_symbol = { 1: "X", 2: "O" };
     return (
-      <div
-        style={{ margin: "5", padding: "5", width: "200px", height: "150px" }}
-        className="bg-ligth"
+      <div className="status-message"
       >
         It is {player_symbol[player]} turn
       </div>
     );
   };
-  const createBoard = (callback) => {
+  const renderWinner = () => {
+    return (
+      <div className="status-message"
+      >
+        The winner is {calculateWinner(squares)}
+      </div>
+    );
+  };
+  const createBoard = () => {
     let a = [0, 1, 2];
     return (
-      <Container
-        key={uuid()}
-        style={{ margin: "5", paddind: "5", width: "615px", height: "215px" }}
-      >
+      <Container className="w-auto"  key={uuid()}>
         {a.map((item) => {
-          return createRow(item, callback);
+          return createRow(item);
         })}
-        <Row style={{ width: "615px", height: "215px" }} key={uuid()}>
-          <Col>{renderPlayerInTurn()}</Col>
+        <Row key={uuid()}>
+          <Col>
+            {calculateWinner(squares) ? renderWinner() : renderPlayerInTurn()}
+          </Col>
         </Row>
       </Container>
     );
   };
-  return <>{createBoard(handleClick)}</>;
+  return <div className="board d-flex justify-content-center">{createBoard()}</div>;
 };
 
 export default Board;
